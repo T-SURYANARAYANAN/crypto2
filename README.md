@@ -1,14 +1,6 @@
 ## EX. NO:2 IMPLEMENTATION OF PLAYFAIR CIPHER
-
- 
-
 ## AIM:
- 
-
- 
-
 To write a C program to implement the Playfair Substitution technique.
-
 ## DESCRIPTION:
 
 The Playfair cipher starts with creating a key table. The key table is a 5×5 grid of letters that will act as the key for encrypting your plaintext. Each of the 25 letters must be unique and one letter of the alphabet is omitted from the table (as there are 25 spots and 26 letters in the alphabet).
@@ -31,13 +23,66 @@ STEP-3: Arrange the keyword without duplicates in a 5*5 matrix in the row order 
 STEP-4: Group the plain text in pairs and match the corresponding corner letters by forming a rectangular grid.
 STEP-5: Display the obtained cipher text.
 
+## Program:
+```c
+#include <stdio.h>
+#include <string.h>
+#define SIZE 5
+char key[SIZE][SIZE] = 
+{
+    {'M','O','N','A','R'}, {'C','H','Y','B','D'},
+    {'E','F','G','I','K'}, {'L','P','Q','S','T'},
+    {'U','V','W','X','Z'}
+};
 
+void find(char ch, int *r, int *c) 
+{
+    for (int i = 0; i < SIZE*SIZE; i++)
+        if (key[i/SIZE][i%SIZE] == ch) { *r = i/SIZE; *c = i%SIZE; return; }
+}
 
+void playfair(char *in, char *out, int enc) 
+{
+    int r1, c1, r2, c2, s = enc ? 1 : -1;
+    for (int i = 0; in[i]; i += 2) 
+    {
+        find(in[i], &r1, &c1); find(in[i+1], &r2, &c2);
+        if (r1 == r2)
+            out[i] = key[r1][(c1 + s + SIZE) % SIZE],
+            out[i+1] = key[r2][(c2 + s + SIZE) % SIZE];
+        else if (c1 == c2)
+            out[i] = key[(r1 + s + SIZE) % SIZE][c1],
+            out[i+1] = key[(r2 + s + SIZE) % SIZE][c2];
+        else
+            out[i] = key[r1][c2], out[i+1] = key[r2][c1];
+    }
+    out[strlen(in)] = '\0';
+}
 
-Program:
+int main() 
+{
+    char encrypted[100] = {0}, decrypted[100] = {0};
+    char text[100] = {0};
+    printf("Enter text : ");
+    scanf("%99s", text);
+    int len = strlen(text);
+    if (len % 2 != 0) 
+    {
+        printf("Error: Please enter an even number of characters.\n");
+        return 1;
+    }
 
+    playfair(text, encrypted, 1);
+    printf("Encrypted: %s\n", encrypted);
+    
+    playfair(encrypted, decrypted, 0);
+    printf("Decrypted: %s\n", decrypted);
 
+    return 0;
+}
+```
+## Output:
+<img width="1367" height="666" alt="image" src="https://github.com/user-attachments/assets/b49ce5ff-9a77-42a1-9e8a-a96ab0865a4d" />
 
-
-
-Output:
+## Result:
+Thus the implementation of PLAYFAIR CIPHER had been executed successfully. 
